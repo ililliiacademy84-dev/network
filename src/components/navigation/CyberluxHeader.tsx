@@ -3,7 +3,9 @@
  * Follows strict Top Bar Contract with nested dropdown navigation & mobile menu
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import huLogo from '../../assets/logo/HU.png';
+import { useTheme, ThemeMode } from '../../context/ThemeContext';
 import { 
   Network, 
   ChevronDown, 
@@ -23,7 +25,12 @@ import {
   FolderDown, 
   Menu, 
   X,
-  Users
+  Users,
+  Mail,
+  Film,
+  Sun,
+  Moon,
+  Tv
 } from 'lucide-react';
 
 interface CyberluxHeaderProps {
@@ -32,6 +39,8 @@ interface CyberluxHeaderProps {
   onOpenAssistant: () => void;
   onOpenLabs: () => void;
   onOpenProjects: () => void;
+  onOpenMessaging: () => void;
+  unreadCount?: number;
 }
 
 export const CyberluxHeader: React.FC<CyberluxHeaderProps> = ({
@@ -39,10 +48,25 @@ export const CyberluxHeader: React.FC<CyberluxHeaderProps> = ({
   onNavigate,
   onOpenAssistant,
   onOpenLabs,
-  onOpenProjects
+  onOpenProjects,
+  onOpenMessaging,
+  unreadCount = 0
 }) => {
+  const { theme, setTheme } = useTheme();
+  const [isThemeOpen, setIsThemeOpen] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isLanding = activeTab === 'landing';
 
   const handleDropdownClick = (name: string) => {
     setOpenDropdown(openDropdown === name ? null : name);
@@ -55,29 +79,41 @@ export const CyberluxHeader: React.FC<CyberluxHeaderProps> = ({
   };
 
   return (
-    <header className="border-b border-slate-800/90 bg-[#060b18]/95 backdrop-blur-md sticky top-0 z-40">
+    <header 
+      className={`w-full transition-all duration-300 ${
+        isLanding
+          ? scrolled
+            ? 'fixed top-0 left-0 right-0 z-40 bg-[#060b18]/90 backdrop-blur-md border-b border-slate-800/90 shadow-2xl'
+            : 'absolute top-0 left-0 right-0 z-30 bg-gradient-to-b from-black/60 via-black/20 to-transparent border-b border-white/10'
+          : 'sticky top-0 z-40 bg-[#060b18]/95 backdrop-blur-md border-b border-slate-800/90'
+      }`}
+    >
       <div className="w-full px-4 lg:px-8 h-20 flex items-center justify-between gap-6">
         
-        {/* Zone 1: Single Text Element Brand Wordmark */}
+        {/* Zone 1: Single Text Element Brand Wordmark with Official HU Logo */}
         <div 
           onClick={() => handleSelectNav('landing')} 
           className="flex items-center gap-3 shrink-0 cursor-pointer group"
         >
-          <div className="w-11 h-11 rounded-2xl bg-[#00ff87] text-slate-950 flex items-center justify-center font-black shadow-lg shadow-[#00ff87]/25 group-hover:scale-105 transition-transform">
-            <Network className="w-6 h-6" />
+          <div className="w-11 h-11 rounded-2xl bg-slate-950/80 border border-[#00ff87]/50 p-1 flex items-center justify-center shadow-lg shadow-[#00ff87]/25 group-hover:scale-105 transition-transform overflow-hidden backdrop-blur-md">
+            <img 
+              src={huLogo} 
+              alt="Haramaya University Logo" 
+              className="w-full h-full object-contain"
+            />
           </div>
           <div>
-            <span className="font-extrabold text-lg text-white tracking-tight flex items-center gap-1.5">
+            <span className="font-extrabold text-lg text-white tracking-tight flex items-center gap-1.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
               HARAMAYA <span className="text-[#00ff87]">NOC</span>
             </span>
-            <span className="text-[10px] text-slate-400 block font-mono">
+            <span className="text-[10px] text-slate-300 block font-mono drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
               Smart Network Simulator & Cybersecurity
             </span>
           </div>
         </div>
 
         {/* Zone 2: Navigation Links & Nested Dropdowns (Desktop) */}
-        <nav className="hidden xl:flex items-center gap-6 text-xs font-semibold text-slate-300">
+        <nav className="hidden xl:flex items-center gap-6 text-xs font-semibold text-slate-200 drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">
           {/* 1. Home */}
           <button
             onClick={() => handleSelectNav('landing')}
@@ -312,8 +348,113 @@ export const CyberluxHeader: React.FC<CyberluxHeaderProps> = ({
           </button>
         </nav>
 
-        {/* Zone 3: Primary Action & Mobile Menu Toggle */}
-        <div className="flex items-center gap-3">
+        {/* Zone 3: Primary Action, Theme Toggle & Mobile Menu Toggle */}
+        <div className="flex items-center gap-2.5">
+          {/* Theme Selector Popover */}
+          <div className="relative">
+            <button
+              onClick={() => setIsThemeOpen(!isThemeOpen)}
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 text-xs font-bold border border-slate-700/80 cursor-pointer transition-all hover:border-[#00ff87]/50 shadow-md"
+              title="Select Theme Mode (Light, Dark, Netflix Mode)"
+            >
+              {theme === 'netflix' ? (
+                <>
+                  <Tv className="w-4 h-4 text-[#e50914] animate-pulse" />
+                  <span className="hidden md:inline text-white font-extrabold">NETFLIX MODE</span>
+                </>
+              ) : theme === 'light' ? (
+                <>
+                  <Sun className="w-4 h-4 text-amber-400" />
+                  <span className="hidden md:inline">Light</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-4 h-4 text-[#00ff87]" />
+                  <span className="hidden md:inline">Dark</span>
+                </>
+              )}
+              <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+            </button>
+
+            {isThemeOpen && (
+              <div 
+                className="absolute right-0 mt-2 w-48 bg-[#0c0c0c] border border-slate-800 rounded-2xl shadow-2xl p-2 space-y-1 z-50 animate-in fade-in zoom-in-95 duration-150"
+                onMouseLeave={() => setIsThemeOpen(false)}
+              >
+                <div className="px-3 py-1.5 text-[10px] font-mono text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800/80 mb-1">
+                  Choose Color Theme
+                </div>
+                
+                <button
+                  onClick={() => {
+                    setTheme('netflix');
+                    setIsThemeOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all cursor-pointer ${
+                    theme === 'netflix'
+                      ? 'bg-[#e50914] text-white shadow-lg shadow-[#e50914]/30'
+                      : 'hover:bg-slate-900 text-slate-200 hover:text-white'
+                  }`}
+                >
+                  <Tv className="w-4 h-4 text-[#e50914]" />
+                  <span>🎬 Netflix Mode</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setTheme('dark');
+                    setIsThemeOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all cursor-pointer ${
+                    theme === 'dark'
+                      ? 'bg-[#00ff87]/20 text-[#00ff87] border border-[#00ff87]/40'
+                      : 'hover:bg-slate-900 text-slate-200 hover:text-white'
+                  }`}
+                >
+                  <Moon className="w-4 h-4 text-[#00ff87]" />
+                  <span>🌙 Dark (Cyberlux)</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setTheme('light');
+                    setIsThemeOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-2.5 transition-all cursor-pointer ${
+                    theme === 'light'
+                      ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40'
+                      : 'hover:bg-slate-900 text-slate-200 hover:text-white'
+                  }`}
+                >
+                  <Sun className="w-4 h-4 text-amber-400" />
+                  <span>☀ Light Mode</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Messages Button with Unread Badge */}
+          <button
+            onClick={onOpenMessaging}
+            className="relative flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white font-semibold text-xs border border-slate-700/80 cursor-pointer transition-all hover:border-[#00ff87]/50 shadow-md"
+            title="Open Haramaya Enterprise Messaging & Packet Tracer Simulation"
+          >
+            <div className="relative">
+              <Mail className="w-4 h-4 text-[#00ff87]" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 px-1.5 py-0.2 rounded-full bg-[#00ff87] text-slate-950 font-black text-[9px] font-mono shadow-sm animate-pulse">
+                  {unreadCount}
+                </span>
+              )}
+            </div>
+            <span className="hidden md:inline">Messages</span>
+            {unreadCount > 0 && (
+              <span className="hidden sm:inline-block px-1.5 py-0.5 rounded-md bg-[#00ff87]/20 text-[#00ff87] text-[10px] font-mono font-bold">
+                [{unreadCount}]
+              </span>
+            )}
+          </button>
+
           <button
             onClick={onOpenAssistant}
             className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white font-semibold text-xs border border-slate-700/80 cursor-pointer transition-all"
@@ -345,6 +486,23 @@ export const CyberluxHeader: React.FC<CyberluxHeaderProps> = ({
       {isMobileMenuOpen && (
         <div className="xl:hidden bg-[#0b112c] border-b border-slate-800 p-4 space-y-3 animate-in slide-in-from-top-4 duration-200">
           <div className="grid grid-cols-2 gap-2 text-xs">
+            <button
+              onClick={() => {
+                onOpenMessaging();
+                setIsMobileMenuOpen(false);
+              }}
+              className="p-2.5 rounded-xl bg-[#00ff87]/15 border border-[#00ff87]/40 text-left font-semibold text-[#00ff87] flex items-center justify-between"
+            >
+              <span className="flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                Messages
+              </span>
+              {unreadCount > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full bg-[#00ff87] text-slate-950 font-bold text-[10px]">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
             <button
               onClick={() => handleSelectNav('landing')}
               className="p-2.5 rounded-xl bg-slate-900 text-left font-semibold text-white hover:bg-[#00ff87]/15"

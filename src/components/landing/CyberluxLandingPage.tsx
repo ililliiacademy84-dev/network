@@ -8,6 +8,8 @@ import React, { useState, useRef } from 'react';
 import heroVideo09 from '../../assets/video/09.mp4';
 import heroVideoLife from '../../assets/video/life.mp4';
 import heroVideo10 from '../../assets/video/10.mp4';
+import huLogo from '../../assets/logo/HU.png';
+import { ThreeDHeroHeadline } from './ThreeDHeroHeadline';
 import { 
   ShieldCheck, 
   Lock, 
@@ -46,13 +48,15 @@ interface CyberluxLandingPageProps {
   onOpenAssistant: () => void;
   onOpenLabs: () => void;
   onOpenProjects: () => void;
+  onOpenMessaging?: () => void;
 }
 
 export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
   onNavigate,
   onOpenAssistant,
   onOpenLabs,
-  onOpenProjects
+  onOpenProjects,
+  onOpenMessaging
 }) => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [testimonialIndex, setTestimonialIndex] = useState<number>(0);
@@ -104,38 +108,8 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
   return (
     <div className="min-h-screen bg-[#070b19] text-slate-100 font-sans selection:bg-[#00ff87] selection:text-slate-950 overflow-x-hidden">
       
-      {/* ── TOP NEON GREEN ANNOUNCEMENT BANNER ── */}
-      <div className="bg-[#00ff87] text-slate-950 px-4 py-4.5 shadow-lg shadow-[#00ff87]/20 border-b border-[#00e575]">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="font-extrabold text-base tracking-tight uppercase">
-              Select The Perfect Plan For Your Needs.
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs font-semibold">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 shrink-0 text-slate-900" />
-              <span>Protect Identity & Access</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Lock className="w-5 h-5 shrink-0 text-slate-900" />
-              <span>Ensure Safety in Cyberspace</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Globe className="w-5 h-5 shrink-0 text-slate-900" />
-              <span>Multi-Campus Network Defense</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <PhoneCall className="w-5 h-5 shrink-0 text-slate-900" />
-              <span>NOC Desk: +251 25 553 0334</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── HERO SECTION WITH ORIGINAL BACKGROUND VIDEO ANIMATION ── */}
-      <section className="relative min-h-[720px] lg:min-h-[840px] flex items-center px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* ── HERO SECTION WITH ORIGINAL BACKGROUND VIDEO ANIMATION (Extends Under Transparent Header) ── */}
+      <section className="relative min-h-[760px] lg:min-h-[860px] pt-28 sm:pt-32 lg:pt-36 pb-16 flex items-center px-4 sm:px-6 lg:px-8 overflow-hidden">
         
         {/* ── LAYER 1: 100% CRYSTAL-CLEAR ORIGINAL VIDEO BACKGROUND ── */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -156,18 +130,18 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
           </video>
         </div>
 
-        {/* ── LAYER 2: MINIMAL SEAMLESS EDGE FADE (Preserves Full Video Center Clarity) ── */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#070b19] via-transparent to-transparent opacity-80 pointer-events-none z-[1]" />
+        {/* ── LAYER 2: 100% TRANSPARENT CRYSTAL CLEAR OVERLAY (Ensures full background video animation visibility) ── */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none z-[1]" />
 
         {/* ── LAYER 4: HERO CONTENT & CALL-TO-ACTION BUTTONS ── */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full py-16 lg:py-20 flex flex-col lg:flex-row items-center justify-between gap-12">
+        <div className="relative z-10 max-w-7xl mx-auto w-full py-8 lg:py-12 flex flex-col lg:flex-row items-center justify-between gap-12">
           
           {/* Left Content Column with text drop shadows for pristine readability over bright/dark video */}
           <div className="flex-1 space-y-6 max-w-2xl">
             {/* Top Eyebrow Badges */}
             <div className="flex flex-wrap items-center gap-2.5">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-[#00ff87]/50 text-[#00ff87] text-xs font-black tracking-wider uppercase shadow-xl">
-                <Sparkles className="w-3.5 h-3.5" />
+                <img src={huLogo} alt="Haramaya University Logo" className="w-4 h-4 object-contain" />
                 <span>HARAMAYA UNIVERSITY</span>
               </div>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-md border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold shadow-xl">
@@ -178,12 +152,7 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
 
             {/* Main Headlines - Fully Transparent directly over video */}
             <div className="space-y-3">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.08] uppercase drop-shadow-[0_4px_24px_rgba(0,0,0,1)]">
-                DESIGN. CONFIGURE.<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00ff87] via-[#00e5ff] to-cyan-400">
-                  SIMULATE THE FUTURE.
-                </span>
-              </h1>
+              <ThreeDHeroHeadline />
               <p className="text-sm sm:text-base font-semibold text-cyan-300 font-mono drop-shadow-[0_2px_12px_rgba(0,0,0,1)]">
                 Haramaya University Smart Network Simulation Platform
               </p>
@@ -254,40 +223,44 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
           </div>
 
           {/* Right Hero Visual & Telemetry Card (Allows full background video visibility) */}
-          <div className="flex-1 relative max-w-lg lg:max-w-md w-full">
-            <div className="bg-[#0b112c]/85 backdrop-blur-xl p-6 rounded-3xl border border-[#00ff87]/35 shadow-2xl shadow-[#00ff87]/15 space-y-5">
+          <div className="flex-1 relative max-w-lg lg:max-w-md w-full group">
+            {/* Luminous Glow Edge Backlight */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#00ff87]/40 via-[#00e5ff]/30 to-cyan-500/40 rounded-3xl blur-xl opacity-80 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+            {/* Ultra-Transparent Glass Container (Video animation visible directly through card) */}
+            <div className="relative bg-slate-950/15 backdrop-blur-md p-6 rounded-3xl border-2 border-[#00ff87]/80 shadow-[0_0_35px_rgba(0,255,135,0.4)] hover:shadow-[0_0_55px_rgba(0,255,135,0.6)] hover:border-[#00ff87] space-y-5 transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-[#00ff87]/20 border border-[#00ff87]/40 flex items-center justify-center text-[#00ff87]">
+                  <div className="w-10 h-10 rounded-2xl bg-[#00ff87]/20 border border-[#00ff87]/60 flex items-center justify-center text-[#00ff87] shadow-[0_0_20px_rgba(0,255,135,0.4)]">
                     <Activity className="w-5 h-5 animate-pulse" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-white">4-Campus OSPF Area 0</h4>
-                    <p className="text-[10px] text-slate-400 font-mono">10.10.0.0/16 &bull; 10.20.0.0/16 &bull; 10.40.0.0/16</p>
+                    <h4 className="text-sm font-black text-white tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">4-Campus OSPF Area 0</h4>
+                    <p className="text-[10px] text-cyan-300 font-mono font-bold drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">10.10.0.0/16 &bull; 10.20.0.0/16 &bull; 10.40.0.0/16</p>
                   </div>
                 </div>
-                <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold border border-emerald-500/30">
+                <span className="px-2.5 py-1 rounded-full bg-emerald-500/25 text-emerald-300 text-[10px] font-mono font-extrabold border border-emerald-400/60 shadow-[0_0_12px_rgba(16,185,129,0.4)] backdrop-blur-md">
                   LIVE
                 </span>
               </div>
 
-              {/* Quick Metrics Inside Card */}
+              {/* Quick Metrics Inside Card (Ultra-Transparent Glass Sub-Cards) */}
               <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
-                <div className="bg-slate-950/70 p-3 rounded-2xl border border-slate-800/90">
-                  <span className="text-slate-400 block text-[9px] uppercase">Core Links</span>
-                  <span className="text-[#00ff87] font-bold text-sm">20 Gbps Aggregate</span>
+                <div className="bg-slate-950/20 backdrop-blur-sm p-3 rounded-2xl border border-[#00ff87]/30 hover:border-[#00ff87]/70 transition-colors shadow-sm">
+                  <span className="text-slate-300 block text-[9px] uppercase font-bold drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">Core Links</span>
+                  <span className="text-[#00ff87] font-black text-sm drop-shadow-[0_0_10px_rgba(0,255,135,0.6)]">20 Gbps Aggregate</span>
                 </div>
-                <div className="bg-slate-950/70 p-3 rounded-2xl border border-slate-800/90">
-                  <span className="text-slate-400 block text-[9px] uppercase">Firewall Tier</span>
-                  <span className="text-cyan-300 font-bold text-sm">ASA 5506-X Active</span>
+                <div className="bg-slate-950/20 backdrop-blur-sm p-3 rounded-2xl border border-cyan-400/30 hover:border-cyan-400/70 transition-colors shadow-sm">
+                  <span className="text-slate-300 block text-[9px] uppercase font-bold drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">Firewall Tier</span>
+                  <span className="text-cyan-300 font-black text-sm drop-shadow-[0_0_10px_rgba(6,182,212,0.6)]">ASA 5506-X Active</span>
                 </div>
-                <div className="bg-slate-950/70 p-3 rounded-2xl border border-slate-800/90">
-                  <span className="text-slate-400 block text-[9px] uppercase">VLAN Segments</span>
-                  <span className="text-white font-bold text-sm">15 Configured</span>
+                <div className="bg-slate-950/20 backdrop-blur-sm p-3 rounded-2xl border border-white/20 hover:border-white/60 transition-colors shadow-sm">
+                  <span className="text-slate-300 block text-[9px] uppercase font-bold drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">VLAN Segments</span>
+                  <span className="text-white font-black text-sm drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)]">15 Configured</span>
                 </div>
-                <div className="bg-slate-950/70 p-3 rounded-2xl border border-slate-800/90">
-                  <span className="text-slate-400 block text-[9px] uppercase">IPSec Tunnels</span>
-                  <span className="text-emerald-400 font-bold text-sm">3 Established</span>
+                <div className="bg-slate-950/20 backdrop-blur-sm p-3 rounded-2xl border border-emerald-400/30 hover:border-emerald-400/70 transition-colors shadow-sm">
+                  <span className="text-slate-300 block text-[9px] uppercase font-bold drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">IPSec Tunnels</span>
+                  <span className="text-emerald-400 font-black text-sm drop-shadow-[0_0_10px_rgba(52,211,153,0.6)]">3 Established</span>
                 </div>
               </div>
 
@@ -295,13 +268,13 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
               <div className="flex items-center gap-2 pt-1">
                 <button
                   onClick={() => onNavigate('telemetry')}
-                  className="flex-1 py-2.5 rounded-xl bg-[#00ff87] text-slate-950 text-xs font-bold hover:bg-[#00e575] transition-all cursor-pointer text-center"
+                  className="flex-1 py-2.5 rounded-xl bg-[#00ff87] text-slate-950 text-xs font-black hover:bg-[#00e575] shadow-lg shadow-[#00ff87]/40 transition-all cursor-pointer text-center uppercase tracking-wider"
                 >
                   View Bandwidth NOC
                 </button>
                 <button
                   onClick={() => onNavigate('soc')}
-                  className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-slate-950/30 hover:bg-slate-900/60 text-slate-100 text-xs font-black border border-slate-600/80 hover:border-slate-400 transition-all cursor-pointer backdrop-blur-md shadow-md"
                   title="View Security Operations Center"
                 >
                   SOC Guard
@@ -311,6 +284,36 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
           </div>
         </div>
       </section>
+
+      {/* ── TOP NEON GREEN ANNOUNCEMENT BANNER ── */}
+      <div className="bg-[#00ff87] text-slate-950 px-4 py-4.5 shadow-lg shadow-[#00ff87]/20 border-b border-[#00e575] relative z-20">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="font-extrabold text-base tracking-tight uppercase">
+              Select The Perfect Plan For Your Needs.
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs font-semibold">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 shrink-0 text-slate-900" />
+              <span>Protect Identity & Access</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Lock className="w-5 h-5 shrink-0 text-slate-900" />
+              <span>Ensure Safety in Cyberspace</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Globe className="w-5 h-5 shrink-0 text-slate-900" />
+              <span>Multi-Campus Network Defense</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <PhoneCall className="w-5 h-5 shrink-0 text-slate-900" />
+              <span>NOC Desk: +251 25 553 0334</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* ── SECTION 1: ABOUT OUR PLATFORM (Cyberlux Dual-Frame Section) ── */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-800/80 bg-[#060a16] relative">
@@ -1052,7 +1055,7 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
                 <Network className="w-6 h-6" />
               </div>
               <span className="font-extrabold text-lg text-white tracking-tight">
-                HARAMAYA <span className="text-[#00ff87]">NOC</span>
+                HARAMAYA <span className="text-[#00ff87]"> UNIVERSITY</span>
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">

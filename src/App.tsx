@@ -68,6 +68,11 @@ import { BandwidthTrafficMonitor } from './components/telemetry/BandwidthTraffic
 import { CyberluxLandingPage } from './components/landing/CyberluxLandingPage';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { CyberluxHeader } from './components/navigation/CyberluxHeader';
+import { MessagingModal } from './components/messaging/MessagingModal';
+import { MessageToast } from './components/messaging/MessageToast';
+import { DraggableMessagePdu } from './components/messaging/DraggableMessagePdu';
+import { messagingService } from './utils/messagingService';
+import huLogo from './assets/logo/HU.png';
 
 import { 
   Network, 
@@ -95,7 +100,17 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-export default function App() {
+import { ThemeProvider } from './context/ThemeContext';
+
+export default function AppWrapper() {
+  return (
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  );
+}
+
+export function App() {
   // Main view navigation: defaults to Cyberlux Landing Page
   const [activeTab, setActiveTab] = useState<'landing' | 'topology' | 'colleges' | 'portal' | 'soc' | 'vpn' | 'telemetry' | 'calculator' | 'iot' | 'labs' | 'buildings' | 'tables' | 'configs' | 'admin'>('landing');
   const [activeCampus, setActiveCampus] = useState<'all' | 'main' | 'hit' | 'cvm' | 'harar'>('all');
@@ -137,6 +152,18 @@ export default function App() {
   const [isLabsOpen, setIsLabsOpen] = useState<boolean>(false);
   const [isProjectsOpen, setIsProjectsOpen] = useState<boolean>(false);
   const [isIotLabOpen, setIsIotLabOpen] = useState<boolean>(false);
+  const [isMessagingOpen, setIsMessagingOpen] = useState<boolean>(false);
+  const [activeChatRecipientId, setActiveChatRecipientId] = useState<string | null>(null);
+  const [unreadMessageCount, setUnreadMessageCount] = useState<number>(() => messagingService.getUnreadCount());
+
+  // Listen for messaging updates to keep unread badges updated
+  useEffect(() => {
+    setUnreadMessageCount(messagingService.getUnreadCount());
+    const unsubscribe = messagingService.subscribe(() => {
+      setUnreadMessageCount(messagingService.getUnreadCount());
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Simulation Engine state
   const [simMode, setSimMode] = useState<'realtime' | 'simulation'>('realtime');
@@ -457,6 +484,11 @@ export default function App() {
         onOpenAssistant={() => setIsAssistantOpen(true)}
         onOpenLabs={() => setIsLabsOpen(true)}
         onOpenProjects={() => setIsProjectsOpen(true)}
+        onOpenMessaging={() => {
+          setActiveChatRecipientId(null);
+          setIsMessagingOpen(true);
+        }}
+        unreadCount={unreadMessageCount}
       />
 
       {/* ── LANDING PAGE VIEW ── */}
@@ -469,6 +501,10 @@ export default function App() {
           onOpenAssistant={() => setIsAssistantOpen(true)}
           onOpenLabs={() => setIsLabsOpen(true)}
           onOpenProjects={() => setIsProjectsOpen(true)}
+          onOpenMessaging={() => {
+            setActiveChatRecipientId(null);
+            setIsMessagingOpen(true);
+          }}
         />
       ) : (
         /* ── ENGINEERING & SIMULATION WORKSPACE ── */
@@ -814,9 +850,37 @@ export default function App() {
         />
       )}
 
+      {/* ── END-USER MESSAGING MODAL & REAL-TIME PACKET TRACER SIMULATOR ── */}
+      <MessagingModal
+        isOpen={isMessagingOpen}
+        onClose={() => {
+          setIsMessagingOpen(false);
+          setActiveChatRecipientId(null);
+        }}
+        initialRecipientId={activeChatRecipientId}
+      />
+
+      {/* ── REAL-TIME INCOMING MESSAGE TOAST NOTIFICATION ── */}
+      <MessageToast
+        onOpenConversation={(recipientId) => {
+          setActiveChatRecipientId(recipientId);
+          setIsMessagingOpen(true);
+        }}
+      />
+
+      {/* ── DRAGGABLE PACKET TRACER SIMPLE PDU ENVELOPE TOOL ── */}
+      <DraggableMessagePdu
+        onOpenMessaging={() => {
+          setActiveChatRecipientId(null);
+          setIsMessagingOpen(true);
+        }}
+        unreadCount={unreadMessageCount}
+      />
+
       {/* Footer */}
       <footer className="border-t border-slate-800/60 py-6 text-center text-xs text-slate-500 mt-auto bg-slate-950/80">
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-7xl mx-auto px-4">
+          <img src={huLogo} alt="Haramaya University Logo" className="w-6 h-6 object-contain" />
           <span>Haramaya University Smart Network Configuration & Simulation Platform</span>
           <span className="hidden sm:inline">&bull;</span>
           <span className="text-slate-400">

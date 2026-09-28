@@ -1,1 +1,41 @@
 @import "tailwindcss";
+
+:root {
+  --netflix-bg: #050505;
+  --netflix-surface: #111111;
+  --netflix-surface-secondary: #181818;
+  --netflix-text: #ffffff;
+  --netflix-text-secondary: #b3b3b3;
+  --netflix-accent: #e50914;
+  --netflix-border: rgba(255, 255, 255, 0.12);
+  --netflix-overlay: rgba(0, 0, 0, 0.65);
+}
+
+/* 🎬 NETFLIX MODE THEME STYLING OVERRIDES */
+[data-theme="netflix"] {
+  background-color: #050505 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="netflix"] header {
+  border-bottom-color: rgba(229, 9, 20, 0.3) !important;
+}
+
+[data-theme="netflix"] [class*="bg-[#00ff87]"] {
+  background-color: #e50914 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="netflix"] [class*="text-[#00ff87]"] {
+  color: #e50914 !important;
+}
+
+[data-theme="netflix"] [class*="border-[#00ff87]"] {
+  border-color: #e50914 !important;
+}
+
+/* ☀ LIGHT MODE OVERRIDES */
+[data-theme="light"] {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
