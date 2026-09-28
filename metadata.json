@@ -1,0 +1,6 @@
+{
+  "name": "Haramaya University Network - Cisco Packet Tracer Showcase",
+  "description": "Enterprise Three-Tier Hierarchical Network Design, Cisco IOS CLI, 11 Colleges, 60 Departments, DMZ Services & IoT for Haramaya University.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

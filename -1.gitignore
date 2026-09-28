@@ -1,0 +1,56 @@
+# ── Dependencies ───────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Secrets / environment ──────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ── Build output ───────────────────────────────────────────────
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# ── Python ─────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# ── Mobile / Expo ──────────────────────────────────────────────
+.expo/
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+expo-env.d.ts
+ios/Pods/
+android/.gradle/
+
+# ── Tooling / agent artifacts ──────────────────────────────────
+.claude/
+.cursor/
+.devin/
+.agents/
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# ── Data / runtime ─────────────────────────────────────────────
+pgdata/
+redisdata/
+coverage/
+tmp/
+uploads/
