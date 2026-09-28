@@ -112,7 +112,7 @@ export const CyberluxHeader: React.FC<CyberluxHeaderProps> = ({
           </div>
           <div>
             <span className="font-extrabold text-lg text-white tracking-tight flex items-center gap-1.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-              HARAMAYA <span className="text-[#00ff87]">NOC</span>
+              HARAMAYA <span className="text-[#00ff87]">UNIVERSITY</span>
             </span>
             <span className="text-[10px] text-slate-300 block font-mono drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">
               Smart Network Simulator & Cybersecurity
