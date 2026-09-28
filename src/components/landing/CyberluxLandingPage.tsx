@@ -309,7 +309,7 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
             </div>
             <div className="flex items-center gap-2">
               <PhoneCall className="w-5 h-5 shrink-0 text-slate-900" />
-              <span>NOC Desk: +251 25 553 0334</span>
+              <span>HARAMAYA Desk: +251 25 553 0334</span>
             </div>
           </div>
         </div>

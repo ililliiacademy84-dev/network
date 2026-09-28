@@ -200,6 +200,79 @@ C    172.16.10.0/26 is directly connected, GigabitEthernet1/2`,
           type: 'output'
         }
       ]);
+    } else if (lower.startsWith('show spanning-tree') || lower === 'sh stp') {
+      setLines((prev) => [
+        ...prev,
+        {
+          text: `VLAN0001
+  Spanning tree enabled protocol rstp
+  Root ID    Priority    32769
+             Address     0011.2233.4455
+             This bridge is the root
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Gi0/1               Desg FWD 4         128.1    P2p 
+Gi0/2               Desg FWD 4         128.2    P2p 
+Fa0/1               Desg FWD 19        128.3    P2p Edge`,
+          type: 'output'
+        }
+      ]);
+    } else if (lower.startsWith('show cdp') || lower.startsWith('show lldp')) {
+      setLines((prev) => [
+        ...prev,
+        {
+          text: `Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone
+
+Device ID        Local Intrfce     Holdtme    Capability  Platform  Port ID
+SW-BATI-CORE     Gi0/1             165            S I     WS-C3850  Gi0/1
+R-HIT-CORE       Gi0/2             158           R S I    CISCO4451 Gi0/0
+ASA-5506-BATI    Gi0/3             172            S H     ASA5506X  Gi0/1`,
+          type: 'output'
+        }
+      ]);
+    } else if (lower.startsWith('show mac') || lower === 'sh mac-address-table') {
+      setLines((prev) => [
+        ...prev,
+        {
+          text: `          Mac Address Table
+-------------------------------------------
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+   1    0011.2233.4455    DYNAMIC     Gi0/1
+  10    00aa.bbcc.dd11    DYNAMIC     Fa0/1
+  20    00aa.bbcc.dd22    DYNAMIC     Fa0/2
+Total Mac Addresses for this criterion: 3`,
+          type: 'output'
+        }
+      ]);
+    } else if (lower.startsWith('show ip ospf neighbor') || lower === 'sh ip ospf neigh') {
+      setLines((prev) => [
+        ...prev,
+        {
+          text: `Neighbor ID     Pri   State           Dead Time   Address         Interface
+10.20.1.1         1   FULL/BDR        00:00:34    10.20.1.1       GigabitEthernet0/1
+10.30.1.1         1   FULL/DR         00:00:38    10.30.1.1       GigabitEthernet0/2
+10.40.1.1         1   FULL/DROTHER    00:00:31    10.40.1.1       GigabitEthernet0/3`,
+          type: 'output'
+        }
+      ]);
+    } else if (lower.startsWith('copy run') || lower === 'copy running-config startup-config' || lower === 'write memory' || lower === 'wr') {
+      setLines((prev) => [
+        ...prev,
+        { text: `Building configuration...`, type: 'output' },
+        { text: `[OK] Configuration saved to NVRAM startup-config.`, type: 'output' }
+      ]);
+    } else if (lower.startsWith('hostname ')) {
+      const newName = tokens[1];
+      if (newName) {
+        if (onDeviceMutate) {
+          onDeviceMutate({ ...device, hostname: newName, name: newName });
+        }
+        setLines((prev) => [...prev, { text: `% Hostname updated to ${newName}`, type: 'output' }]);
+      }
     } else if (lower.startsWith('show vlan') || lower === 'sh vlan br') {
       setLines((prev) => [
         ...prev,

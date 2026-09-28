@@ -40,6 +40,10 @@ interface CyberluxHeaderProps {
   onOpenLabs: () => void;
   onOpenProjects: () => void;
   onOpenMessaging: () => void;
+  onOpenTroubleshooting?: () => void;
+  onOpenDocGen?: () => void;
+  onOpenRbac?: () => void;
+  onOpenScenarioEngine?: () => void;
   unreadCount?: number;
 }
 
@@ -50,6 +54,10 @@ export const CyberluxHeader: React.FC<CyberluxHeaderProps> = ({
   onOpenLabs,
   onOpenProjects,
   onOpenMessaging,
+  onOpenTroubleshooting,
+  onOpenDocGen,
+  onOpenRbac,
+  onOpenScenarioEngine,
   unreadCount = 0
 }) => {
   const { theme, setTheme } = useTheme();
@@ -325,6 +333,42 @@ export const CyberluxHeader: React.FC<CyberluxHeaderProps> = ({
                   <Table className="w-4 h-4 text-cyan-400" />
                   <span>IP & VLAN Schemes</span>
                 </button>
+                {onOpenTroubleshooting && (
+                  <button
+                    onClick={() => {
+                      onOpenTroubleshooting();
+                      setOpenDropdown(null);
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs hover:bg-[#00ff87]/15 hover:text-[#00ff87] text-slate-200 flex items-center gap-2 cursor-pointer"
+                  >
+                    <Activity className="w-4 h-4 text-[#00ff87]" />
+                    <span>Guided Troubleshooting</span>
+                  </button>
+                )}
+                {onOpenDocGen && (
+                  <button
+                    onClick={() => {
+                      onOpenDocGen();
+                      setOpenDropdown(null);
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs hover:bg-[#00ff87]/15 hover:text-[#00ff87] text-slate-200 flex items-center gap-2 cursor-pointer"
+                  >
+                    <FileCode className="w-4 h-4 text-amber-400" />
+                    <span>Technical Doc Spec</span>
+                  </button>
+                )}
+                {onOpenScenarioEngine && (
+                  <button
+                    onClick={() => {
+                      onOpenScenarioEngine();
+                      setOpenDropdown(null);
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs hover:bg-[#00ff87]/15 hover:text-[#00ff87] text-slate-200 flex items-center gap-2 cursor-pointer"
+                  >
+                    <Award className="w-4 h-4 text-amber-500" />
+                    <span>Fault Scenario Engine</span>
+                  </button>
+                )}
                 <button
                   onClick={() => handleSelectNav('portal')}
                   className="w-full text-left px-3 py-2 rounded-xl text-xs hover:bg-[#00ff87]/15 hover:text-[#00ff87] text-slate-200 flex items-center gap-2 cursor-pointer"

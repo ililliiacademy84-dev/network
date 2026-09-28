@@ -1,59 +1,67 @@
-/**
- * Haramaya University Project Management & Documentation Generator
- * Supports Save/Load project state to browser storage, JSON import/export,
- * and automated export of comprehensive University Network Engineering Documentation.
- */
-
 import React, { useState } from 'react';
-import { NetworkDevice, NetworkLink, VlanInfo, FirewallRule, ProjectSaveState } from '../../types/network';
-import { ALL_HARAMAYA_COLLEGES, ALL_HARAMAYA_DEPARTMENTS } from '../../data/haramayaCollegesData';
-import { 
-  FolderDown, 
-  FileText, 
-  Download, 
-  Upload, 
-  Save, 
-  Copy, 
-  Check, 
-  X, 
-  FileCode, 
-  Share2,
-  BookOpen,
-  Maximize2,
-  Minimize2
-} from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { ProjectSaveState, NetworkDevice, NetworkLink, VlanInfo, FirewallRule } from '../../types/network';
+import { FolderKanban, Plus, Save, Download, Upload, Copy, Archive, CheckCircle2, Clock } from 'lucide-react';
 
 interface ProjectManagerModalProps {
+  onClose: () => void;
   devices: NetworkDevice[];
   links: NetworkLink[];
   vlans: VlanInfo[];
   firewallRules: FirewallRule[];
   onLoadProject: (project: ProjectSaveState) => void;
-  onClose: () => void;
 }
 
 export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
+  onClose,
   devices,
   links,
   vlans,
   firewallRules,
-  onLoadProject,
-  onClose
+  onLoadProject
 }) => {
-  const [activeTab, setActiveTab] = useState<'save' | 'export' | 'docs'>('docs');
-  const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
-  const [projectName, setProjectName] = useState<string>('Haramaya-University-Enterprise-Network-v2');
-  const [copiedDocs, setCopiedDocs] = useState<boolean>(false);
-  const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
-
-  // Generate complete project JSON object
-  const generateProjectJson = (): ProjectSaveState => {
-    return {
-      id: `hu-proj-${Date.now()}`,
-      name: projectName,
+  const [projects, setProjects] = useState<ProjectSaveState[]>([
+    {
+      id: 'proj-01',
+      name: 'Haramaya Main Campus & HiT OSPF Area 0 Master Design',
       updatedAt: new Date().toISOString(),
-      version: '2.5.0-Cisco-Packet-Tracer',
+      version: 'v2.4',
+      devices,
+      links,
+      vlans,
+      firewallRules,
+      dnsRecords: [],
+      mailMessages: [],
+      ftpFiles: [],
+      syslogLogs: [],
+      securityEvents: []
+    },
+    {
+      id: 'proj-02',
+      name: 'Harar Health CHMS IPSec VPN Remote Extension',
+      updatedAt: new Date(Date.now() - 86400000).toISOString(),
+      version: 'v1.1',
+      devices: devices.slice(0, 4),
+      links: links.slice(0, 3),
+      vlans: vlans.slice(0, 3),
+      firewallRules,
+      dnsRecords: [],
+      mailMessages: [],
+      ftpFiles: [],
+      syslogLogs: [],
+      securityEvents: []
+    }
+  ]);
+
+  const [projectNameInput, setProjectNameInput] = useState<string>('');
+
+  const handleSaveCurrentAsProject = () => {
+    if (!projectNameInput.trim()) return;
+
+    const newProject: ProjectSaveState = {
+      id: `proj-${Date.now().toString().slice(-4)}`,
+      name: projectNameInput.trim(),
+      updatedAt: new Date().toISOString(),
+      version: 'v1.0',
       devices,
       links,
       vlans,
@@ -64,251 +72,144 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
       syslogLogs: [],
       securityEvents: []
     };
+
+    setProjects([newProject, ...projects]);
+    setProjectNameInput('');
   };
 
-  const handleSaveToBrowser = () => {
-    const proj = generateProjectJson();
-    localStorage.setItem(`HU_NET_PROJ_${projectName}`, JSON.stringify(proj));
-    setSaveSuccess(true);
-    try {
-      confetti({ particleCount: 30, spread: 50 });
-    } catch {}
-    setTimeout(() => setSaveSuccess(false), 2500);
-  };
+  const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const handleDownloadJson = () => {
-    const proj = generateProjectJson();
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(proj, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `${projectName}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-  };
-
-  // Generate Comprehensive Technical Documentation
-  const generateDocumentationText = () => {
-    return `================================================================================
-HARAMAYA UNIVERSITY SMART NETWORK ARCHITECTURE & SPECIFICATION REPORT
-================================================================================
-Simulated Institution: Haramaya University (Main, HiT, CVM & Harar Campuses)
-Technical Framework: Cisco Three-Tier Hierarchical Model & ASA Perimeter Security
-Date: ${new Date().toLocaleDateString()} | Author: Mehad Alam (Adapted for Haramaya University)
-Status: Verified Simulated Network Engineering Blueprint
-Official University Reference: https://www.haramaya.edu.et/
-
-[DISCLAIMER]:
-This document represents an academic network design and simulation blueprint for 
-Haramaya University. Simulated devices, VLANs, and subnets are designed for 
-educational testing in Cisco Packet Tracer and do not represent the physical production 
-network of the university.
-
---------------------------------------------------------------------------------
-1. EXECUTIVE SUMMARY & OBJECTIVES
---------------------------------------------------------------------------------
-The primary objective of this project is to implement a robust, secure, and high-speed
-Three-Tier Hierarchical Network interconnecting four major university campuses:
-  1. Main Campus (Bati/Haramaya) - Central Administration, Computing (CCI), Agriculture
-  2. Haramaya Institute of Technology (HiT) - Engineering Laboratories & IoT
-  3. College of Veterinary Medicine (CVM) - Veterinary Teaching Hospital & Animal Health
-  4. Harar Campus - College of Health & Medical Sciences (CHMS / HiOT Referral Hospital)
-
-All campuses communicate through redundant Gigabit links to EthioTelecom ISP and 
-utilize dedicated Cisco ASA 5506-X Site-to-Site IPSec VPN tunnels (AES-256 / SHA-256) 
-for confidential inter-campus data transfer.
-
---------------------------------------------------------------------------------
-2. THREE-TIER HIERARCHICAL TOPOLOGY ARCHITECTURE
---------------------------------------------------------------------------------
-- CORE LAYER:
-  * Hardware: Cisco Catalyst WS-C3650-24PS Multi-Layer Switches.
-  * Routing: OSPF Area 0, EtherChannel (Port-channel1 & Po2), High-Speed Backbone.
-- DISTRIBUTION LAYER:
-  * Hardware: Cisco Catalyst WS-C3650-24PS.
-  * Functions: Inter-VLAN Routing, Hot Standby Router Protocol (HSRP) Gateway 
-    Redundancy, and Policy Access Control Lists (ACLs).
-- ACCESS LAYER:
-  * Hardware: Cisco Catalyst 2960-24TT Layer-2 Switches.
-  * Functions: 802.1Q VLAN Segmentation, Port-Security, Spanning Tree (PVST+).
-
---------------------------------------------------------------------------------
-3. IP ADDRESSING & 15 ENTERPRISE VLANS
---------------------------------------------------------------------------------
-VLAN 10  - ADMIN      : 10.10.10.0/24   (Gateway: 10.10.10.1)
-VLAN 20  - FACULTY    : 10.10.20.0/24   (Gateway: 10.10.20.1)
-VLAN 30  - STUDENT    : 10.10.30.0/24   (Gateway: 10.10.30.1)
-VLAN 40  - RESEARCH   : 10.10.40.0/24   (Gateway: 10.10.40.1)
-VLAN 50  - LIBRARY    : 10.10.50.0/24   (Gateway: 10.10.50.1)
-VLAN 60  - ICT        : 10.10.60.0/24   (Gateway: 10.10.60.1)
-VLAN 70  - SERVER     : 10.10.70.0/24   (Gateway: 10.10.70.1)
-VLAN 80  - VOICE      : 10.10.80.0/24   (Gateway: 10.10.80.1)
-VLAN 90  - CCTV       : 10.10.90.0/24   (Gateway: 10.10.90.1)
-VLAN 100 - IOT        : 10.10.100.0/24  (Gateway: 10.10.100.1)
-VLAN 110 - GUEST      : 10.10.110.0/24  (Gateway: 10.10.110.1)
-VLAN 120 - MANAGEMENT : 10.10.120.0/24  (Gateway: 10.10.120.1)
-VLAN 130 - SECURITY   : 10.10.130.0/24  (Gateway: 10.10.130.1)
-VLAN 140 - LAB        : 10.10.140.0/24  (Gateway: 10.10.140.1)
-VLAN 150 - DMZ        : 10.10.150.0/24  (Gateway: 10.10.150.1)
-
---------------------------------------------------------------------------------
-4. DMZ SERVICES & SERVERS
---------------------------------------------------------------------------------
-- Authoritative DNS Server  : 10.10.150.4 (www.haramaya.edu.et, hit., cvm., chms.)
-- Dynamic DHCP Server       : 10.10.150.5 (15 VLAN Dynamic Pools)
-- Academic Web Server       : 10.10.150.6 (Haramaya Portal, SIS Registration)
-- Mail Daemon (SMTP/POP3)   : 10.10.150.7 (Official @haramaya.edu.et accounts)
-- Stratum 2 NTP Master      : 10.10.150.8 (East Africa Time UTC+3 Sync)
-- Central Syslog Collector  : 10.10.150.9 (RFC 5424 Event Store)
-- Secure FTP Repository     : 10.10.150.10 (Software & Config Images)
-- Smart IoT Server          : 10.10.100.10 (Sensors & Smart Door Manager)
-
---------------------------------------------------------------------------------
-5. PERIMETER SECURITY & IPSEC VPN
---------------------------------------------------------------------------------
-- Cisco ASA 5506-X Zone Hierarchy:
-  * Outside (Security Level 0)
-  * DMZ (Security Level 70)
-  * Inside (Security Level 100)
-- Site-to-Site IPSec VPN Tunnels:
-  * MAIN <-> HARAR (10.100.1.2 <-> 10.100.4.2)
-  * MAIN <-> HIT   (10.100.1.2 <-> 10.100.2.2)
-  * MAIN <-> CVM   (10.100.1.2 <-> 10.100.3.2)
-  * Phase 1: IKEv1, DH Group 14, Pre-Shared Key Authentication
-  * Phase 2: ESP-AES-256 with SHA-256 HMAC Authentication
-
---------------------------------------------------------------------------------
-6. ACADEMIC ENTITY DIRECTORY (11 COLLEGES / 60 DEPARTMENTS)
---------------------------------------------------------------------------------
-${ALL_HARAMAYA_COLLEGES.map((col) => `* [${col.campusId.toUpperCase()}] ${col.name} (${col.shortName}):
-  - Dean/Lead: ${col.dean}
-  - Building: ${col.building}
-  - Departments (${col.departments.length}):
-${col.departments.map((d) => `    * ${d.name} (${d.code}): Workstation ${d.workstationName} [${d.workstationIp}] | VLAN ${d.vlan} | GW: ${d.gateway}`).join('\n')}`).join('\n\n')}
-
-================================================================================
-END OF NETWORK DESIGN SPECIFICATION REPORT
-================================================================================`;
-  };
-
-  const copyDocumentation = () => {
-    navigator.clipboard.writeText(generateDocumentationText());
-    setCopiedDocs(true);
-    setTimeout(() => setCopiedDocs(false), 2000);
+    const reader = new FileReader();
+    reader.onload = event => {
+      try {
+        const parsed = JSON.parse(event.target?.result as string);
+        if (parsed && parsed.devices && Array.isArray(parsed.devices)) {
+          onLoadProject(parsed);
+          onClose();
+        } else {
+          alert('Invalid HU-SSAN Topology file format.');
+        }
+      } catch (err) {
+        alert('Failed to parse topology file.');
+      }
+    };
+    reader.readAsText(file);
   };
 
   return (
-    <div className={`fixed z-50 inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center ${isFullScreen ? 'p-0' : 'p-4'}`}>
-      <div className={`bg-slate-900 border border-slate-700 shadow-2xl flex flex-col overflow-hidden text-slate-200 transition-all ${
-        isFullScreen ? 'w-full h-full rounded-none border-none' : 'rounded-3xl w-full max-w-4xl h-[740px]'
-      }`}>
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-[#0c0c0c] border border-slate-800 w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        
         {/* Header */}
-        <div className="bg-slate-950 border-b border-slate-800 px-6 py-4 flex items-center justify-between select-none">
+        <div className="px-6 py-4 border-b border-slate-800/80 bg-slate-900/60 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
-              <FolderDown className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-2xl bg-[#00ff87]/20 border border-[#00ff87]/40 flex items-center justify-center text-[#00ff87]">
+              <FolderKanban className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-white text-base">Project Management & Documentation Generator</h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Save network topology projects, export JSON schemas, or generate full engineering reports
+              <h3 className="font-extrabold text-white text-base tracking-wide flex items-center gap-2">
+                <span>HU-SSAN NETWORK PROJECT MANAGER</span>
+              </h3>
+              <p className="text-xs text-slate-400 font-mono">
+                Save, load, duplicate, archive & import network topology designs
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6 overflow-y-auto">
+          {/* Create New Project Bar */}
+          <div className="p-4 rounded-2xl bg-slate-900/50 border border-slate-800 flex flex-col sm:flex-row items-center gap-3">
+            <input
+              type="text"
+              placeholder="Enter New Project Name (e.g. Bati Core Router Upgrade)..."
+              value={projectNameInput}
+              onChange={e => setProjectNameInput(e.target.value)}
+              className="flex-1 w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-mono font-bold outline-none focus:border-[#00ff87]"
+            />
             <button
-              onClick={() => setIsFullScreen(!isFullScreen)}
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
-              title={isFullScreen ? 'Restore' : 'Maximize'}
+              onClick={handleSaveCurrentAsProject}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#00ff87] text-slate-950 text-xs font-black uppercase cursor-pointer whitespace-nowrap flex items-center justify-center gap-2 shadow-lg shadow-[#00ff87]/20"
             >
-              {isFullScreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              <Save className="w-4 h-4" />
+              <span>SAVE CURRENT STATE</span>
             </button>
-            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white cursor-pointer">
-              <X className="w-5 h-5" />
-            </button>
+            <label className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold font-mono cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap border border-slate-700">
+              <Upload className="w-4 h-4 text-cyan-300" />
+              <span>IMPORT JSON</span>
+              <input type="file" accept=".json" onChange={handleImportJson} className="hidden" />
+            </label>
           </div>
-        </div>
 
-        {/* Tab Selector */}
-        <div className="bg-slate-950/70 border-b border-slate-800 px-6 py-2 flex items-center gap-2 text-xs">
-          <button
-            onClick={() => setActiveTab('docs')}
-            className={`px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
-              activeTab === 'docs' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Network Documentation Report
-          </button>
-          <button
-            onClick={() => setActiveTab('save')}
-            className={`px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
-              activeTab === 'save' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Save & Export Project
-          </button>
-        </div>
+          {/* Project List */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
+              Saved Network Projects ({projects.length})
+            </h4>
 
-        {/* Content Body */}
-        <div className="flex-1 bg-slate-950 p-6 overflow-y-auto">
-          {activeTab === 'docs' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-bold text-white">Automated University Architecture Documentation</h4>
-                  <p className="text-xs text-slate-400">Comprehensive report ready for printing, submission, or accreditation</p>
+            <div className="space-y-3">
+              {projects.map(p => (
+                <div
+                  key={p.id}
+                  className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-slate-700 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-extrabold text-white text-sm">{p.name}</span>
+                      <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-mono font-bold">{p.version}</span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono flex items-center gap-3">
+                      <span>{p.devices.length} Devices</span>
+                      <span>&bull;</span>
+                      <span>{p.links.length} Links</span>
+                      <span>&bull;</span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-slate-500" />
+                        {new Date(p.updatedAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-center">
+                    <button
+                      onClick={() => {
+                        onLoadProject(p);
+                        onClose();
+                      }}
+                      className="px-4 py-2 rounded-xl bg-[#00ff87]/20 hover:bg-[#00ff87]/30 text-[#00ff87] text-xs font-bold border border-[#00ff87]/40 cursor-pointer flex items-center gap-1.5"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>LOAD PROJECT</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        const blob = new Blob([JSON.stringify(p, null, 2)], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${p.name.replace(/\s+/g, '_')}.json`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }}
+                      className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white cursor-pointer"
+                      title="Export Project JSON"
+                    >
+                      <Download className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={copyDocumentation}
-                    className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
-                  >
-                    {copiedDocs ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedDocs ? 'Copied' : 'Copy Documentation'}</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-black border border-slate-800 rounded-2xl p-5 font-mono text-xs text-slate-300 leading-relaxed overflow-x-auto max-h-[500px]">
-                <pre>{generateDocumentationText()}</pre>
-              </div>
+              ))}
             </div>
-          )}
-
-          {activeTab === 'save' && (
-            <div className="max-w-xl mx-auto space-y-6 pt-4">
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-                <h4 className="font-bold text-white text-base">Save Topology Project</h4>
-                <div>
-                  <label className="text-xs text-slate-400 block mb-1">Project Name</label>
-                  <input
-                    type="text"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono"
-                  />
-                </div>
-
-                <div className="pt-2 flex flex-col sm:flex-row gap-3">
-                  <button
-                    onClick={handleSaveToBrowser}
-                    className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 cursor-pointer"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>{saveSuccess ? 'Saved to Browser!' : 'Save to Local Storage'}</span>
-                  </button>
-
-                  <button
-                    onClick={handleDownloadJson}
-                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 cursor-pointer"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Download JSON File</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

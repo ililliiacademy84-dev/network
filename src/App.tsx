@@ -71,6 +71,10 @@ import { CyberluxHeader } from './components/navigation/CyberluxHeader';
 import { MessagingModal } from './components/messaging/MessagingModal';
 import { MessageToast } from './components/messaging/MessageToast';
 import { DraggableMessagePdu } from './components/messaging/DraggableMessagePdu';
+import { TroubleshootingCenterModal } from './components/assistant/TroubleshootingCenterModal';
+import { DocumentationGeneratorModal } from './components/admin/DocumentationGeneratorModal';
+import { RbacAuditModal } from './components/admin/RbacAuditModal';
+import { ScenarioEngineModal } from './components/labs/ScenarioEngineModal';
 import { messagingService } from './utils/messagingService';
 import huLogo from './assets/logo/HU.png';
 
@@ -151,6 +155,10 @@ export function App() {
   const [isAssistantOpen, setIsAssistantOpen] = useState<boolean>(false);
   const [isLabsOpen, setIsLabsOpen] = useState<boolean>(false);
   const [isProjectsOpen, setIsProjectsOpen] = useState<boolean>(false);
+  const [isTroubleshootingOpen, setIsTroubleshootingOpen] = useState<boolean>(false);
+  const [isDocGenOpen, setIsDocGenOpen] = useState<boolean>(false);
+  const [isRbacAuditOpen, setIsRbacAuditOpen] = useState<boolean>(false);
+  const [isScenarioOpen, setIsScenarioOpen] = useState<boolean>(false);
   const [isIotLabOpen, setIsIotLabOpen] = useState<boolean>(false);
   const [isMessagingOpen, setIsMessagingOpen] = useState<boolean>(false);
   const [activeChatRecipientId, setActiveChatRecipientId] = useState<string | null>(null);
@@ -488,6 +496,10 @@ export function App() {
           setActiveChatRecipientId(null);
           setIsMessagingOpen(true);
         }}
+        onOpenTroubleshooting={() => setIsTroubleshootingOpen(true)}
+        onOpenDocGen={() => setIsDocGenOpen(true)}
+        onOpenRbac={() => setIsRbacAuditOpen(true)}
+        onOpenScenarioEngine={() => setIsScenarioOpen(true)}
         unreadCount={unreadMessageCount}
       />
 
@@ -838,6 +850,49 @@ export function App() {
             setIsProjectsOpen(false);
           }}
           onClose={() => setIsProjectsOpen(false)}
+        />
+      )}
+
+      {isTroubleshootingOpen && (
+        <TroubleshootingCenterModal
+          isOpen={isTroubleshootingOpen}
+          onClose={() => setIsTroubleshootingOpen(false)}
+          devices={devices}
+          links={links}
+          firewallRules={firewallRules}
+          vpnTunnels={[]}
+          dnsRecords={dnsRecords}
+        />
+      )}
+
+      {isDocGenOpen && (
+        <DocumentationGeneratorModal
+          isOpen={isDocGenOpen}
+          onClose={() => setIsDocGenOpen(false)}
+          devices={devices}
+          links={links}
+          vlans={vlans}
+          firewallRules={firewallRules}
+        />
+      )}
+
+      {isRbacAuditOpen && (
+        <RbacAuditModal
+          isOpen={isRbacAuditOpen}
+          onClose={() => setIsRbacAuditOpen(false)}
+        />
+      )}
+
+      {isScenarioOpen && (
+        <ScenarioEngineModal
+          isOpen={isScenarioOpen}
+          onClose={() => setIsScenarioOpen(false)}
+          devices={devices}
+          links={links}
+          firewallRules={firewallRules}
+          vlans={vlans}
+          onMutateLinks={setLinks}
+          onMutateFirewall={setFirewallRules}
         />
       )}
 

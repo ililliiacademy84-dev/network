@@ -105,7 +105,7 @@ export const ThreeDHeroHeadline: React.FC<ThreeDHeroHeadlineProps> = ({ classNam
   const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(false);
 
   // Synchronized staggered looping text scramble hooks
-  const line1 = useTextScramble('DESIGN.', 150, prefersReducedMotion);
+  const line1 = useTextScramble('SECURE AND SMART NETWORK DESIGN .', 150, prefersReducedMotion);
   const line2 = useTextScramble('CONFIGURE.', 400, prefersReducedMotion);
   const line3 = useTextScramble('SIMULATE THE FUTURE.', 750, prefersReducedMotion);
 
