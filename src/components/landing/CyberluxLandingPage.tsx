@@ -4,7 +4,10 @@
  * Fully interactive with working navigation into Simulator, Labs, Campuses, NOC & Admin
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import heroVideo09 from '../../assets/video/09.mp4';
+import heroVideoLife from '../../assets/video/life.mp4';
+import heroVideo10 from '../../assets/video/10.mp4';
 import { 
   ShieldCheck, 
   Lock, 
@@ -32,7 +35,9 @@ import {
   Calendar,
   Sparkles,
   Search,
-  MessageSquare
+  MessageSquare,
+  Film,
+  Compass
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -52,6 +57,18 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [testimonialIndex, setTestimonialIndex] = useState<number>(0);
   const [videoModalOpen, setVideoModalOpen] = useState<boolean>(false);
+  const [selectedVideo, setSelectedVideo] = useState<string>(heroVideoLife || '/videos/life.mp4');
+  const [videoName, setVideoName] = useState<string>('life.mp4');
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleVideoChange = (vSrc: string, name: string) => {
+    setSelectedVideo(vSrc);
+    setVideoName(name);
+    if (videoRef.current) {
+      videoRef.current.load();
+      videoRef.current.play().catch(() => {});
+    }
+  };
 
   const testimonials = [
     {
@@ -117,99 +134,200 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
         </div>
       </div>
 
-      {/* ── HERO BANNER ── */}
-      <section className="relative pt-12 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Ambient Neon Glows */}
-        <div className="absolute top-1/4 left-10 w-96 h-96 bg-[#00ff87]/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-[#00e5ff]/10 rounded-full blur-[160px] pointer-events-none" />
+      {/* ── HERO SECTION WITH ORIGINAL BACKGROUND VIDEO ANIMATION ── */}
+      <section className="relative min-h-[720px] lg:min-h-[840px] flex items-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#030814]">
+        
+        {/* ── LAYER 1: ORIGINAL VIDEO BACKGROUND ── */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="/src/assets/images/hero_cyber_operator_1790587415867.jpg"
+            className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none opacity-90 transition-opacity duration-700"
+          >
+            <source src={selectedVideo} type="video/mp4" />
+            <source src="/videos/life.mp4" type="video/mp4" />
+            <source src="/videos/09.mp4" type="video/mp4" />
+            <source src="/videos/10.mp4" type="video/mp4" />
+          </video>
+        </div>
 
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
-          {/* Left Content */}
+        {/* ── LAYER 2: DARK TRANSPARENT OVERLAY & BOTTOM GRADIENT ── */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-[1]"
+          style={{
+            background: 'linear-gradient(90deg, rgba(3, 8, 20, 0.88) 0%, rgba(3, 8, 20, 0.65) 45%, rgba(3, 8, 20, 0.40) 100%)'
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060a16] via-transparent to-black/30 pointer-events-none z-[1]" />
+
+        {/* ── LAYER 3: SUBTLE NETWORK PARTICLES & GLOW OVERLAY ── */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-[2] opacity-30">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="cyberGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+                <circle cx="30" cy="30" r="1.5" fill="#00ff87" opacity="0.4" />
+                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#00e5ff" strokeWidth="0.5" opacity="0.12" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#cyberGrid)" />
+          </svg>
+          <div className="absolute top-1/4 left-10 w-96 h-96 bg-[#00ff87]/15 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-[#00e5ff]/15 rounded-full blur-[160px] pointer-events-none" />
+        </div>
+
+        {/* ── LAYER 4: HERO CONTENT & CALL-TO-ACTION BUTTONS ── */}
+        <div className="relative z-10 max-w-7xl mx-auto w-full py-16 lg:py-20 flex flex-col lg:flex-row items-center justify-between gap-12">
+          
+          {/* Left Content Column */}
           <div className="flex-1 space-y-6 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00ff87]/15 border border-[#00ff87]/40 text-[#00ff87] text-xs font-bold tracking-wider uppercase">
-              <Sparkles className="w-4 h-4" />
-              <span>Simulated Haramaya University Network</span>
+            {/* Top Eyebrow Badges */}
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00ff87]/15 border border-[#00ff87]/40 text-[#00ff87] text-xs font-black tracking-wider uppercase">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>HARAMAYA UNIVERSITY</span>
+              </div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold">
+                <span className="w-2 h-2 rounded-full bg-[#00ff87] animate-ping" />
+                <span>NETWORK SIMULATION ONLINE</span>
+              </div>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.12]">
-              Enterprise Network Simulation & <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00ff87] to-[#00e5ff]">Cybersecurity</span> Platform.
-            </h1>
+            {/* Main Headlines */}
+            <div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.08] uppercase">
+                DESIGN. CONFIGURE.<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00ff87] via-[#00e5ff] to-cyan-400">
+                  SIMULATE THE FUTURE.
+                </span>
+              </h1>
+              <p className="text-sm sm:text-base font-semibold text-cyan-300/90 mt-2 font-mono">
+                Haramaya University Smart Network Simulation Platform
+              </p>
+            </div>
 
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
-              Design, configure, and simulate high-availability Cisco architectures across Haramaya University's <strong>4 Campuses</strong>, <strong>11 Colleges</strong>, and <strong>60 Departments</strong> with live Cisco IOS CLI, EtherChannel, OSPF, ASA 5506-X Firewalls, and IPSec VPNs.
+            {/* Supporting Description */}
+            <p className="text-slate-200 text-base sm:text-lg leading-relaxed max-w-xl">
+              Design, configure, simulate, monitor, and troubleshoot a multi-campus university network in an interactive network engineering environment across <strong>4 Campuses</strong>, <strong>11 Colleges</strong>, and <strong>60 Departments</strong>.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="flex flex-wrap items-center gap-3.5 pt-1">
               <button
                 onClick={() => handleLaunchSimulator('all')}
-                className="px-8 py-4 rounded-2xl bg-[#00ff87] hover:bg-[#00e575] text-slate-950 font-extrabold text-sm flex items-center gap-2.5 shadow-xl shadow-[#00ff87]/30 transition-all cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0"
+                className="px-8 py-4 rounded-2xl bg-[#00ff87] hover:bg-[#00e575] text-slate-950 font-black text-xs sm:text-sm flex items-center gap-2.5 shadow-2xl shadow-[#00ff87]/40 transition-all cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-wider"
               >
                 <Play className="w-4 h-4 fill-slate-950" />
-                <span>Launch Packet Tracer Simulator</span>
+                <span>OPEN NETWORK SIMULATOR</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('colleges')}
+                className="px-6 py-4 rounded-2xl bg-[#0b112c]/90 hover:bg-[#142044] text-white font-bold text-xs sm:text-sm flex items-center gap-2 border border-slate-700/90 shadow-xl cursor-pointer transition-all hover:border-[#00ff87]/50 backdrop-blur-md uppercase tracking-wide"
+              >
+                <Compass className="w-4 h-4 text-[#00ff87]" />
+                <span>EXPLORE NETWORK</span>
               </button>
 
               <button
                 onClick={onOpenLabs}
-                className="px-6 py-4 rounded-2xl bg-[#0e1630] hover:bg-[#142044] text-white font-bold text-sm flex items-center gap-2 border border-slate-700/80 shadow-lg cursor-pointer transition-all hover:border-[#00ff87]/40"
+                className="px-5 py-4 rounded-2xl bg-[#0b112c]/90 hover:bg-[#142044] text-white font-bold text-xs sm:text-sm flex items-center gap-2 border border-slate-700/90 shadow-xl cursor-pointer transition-all hover:border-amber-400/50 backdrop-blur-md"
               >
-                <Award className="w-4 h-4 text-[#00ff87]" />
-                <span>12 Networking Labs</span>
-              </button>
-
-              <button
-                onClick={onOpenAssistant}
-                className="px-6 py-4 rounded-2xl bg-[#0e1630] hover:bg-[#142044] text-white font-bold text-sm flex items-center gap-2 border border-slate-700/80 shadow-lg cursor-pointer transition-all hover:border-[#00e5ff]/40"
-              >
-                <Bot className="w-4 h-4 text-[#00e5ff]" />
-                <span>AI Network Audit</span>
+                <Award className="w-4 h-4 text-amber-400" />
+                <span>12 CCNA Labs</span>
               </button>
             </div>
 
-            {/* Quick Stats Grid */}
-            <div className="pt-6 grid grid-cols-3 gap-4 border-t border-slate-800/80 text-xs font-mono">
-              <div className="bg-[#0b112c]/80 p-3 rounded-2xl border border-slate-800">
-                <span className="text-slate-400 block text-[10px]">CAMPUSES</span>
-                <span className="text-[#00ff87] text-base font-bold">4 Linked</span>
+            {/* Original Video Switcher & Status Bar */}
+            <div className="pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800/80 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1.5">
+                  <Film className="w-3.5 h-3.5 text-[#00ff87]" />
+                  Original Background Feed:
+                </span>
+                <div className="flex items-center gap-1 bg-[#060b18]/90 p-1 rounded-xl border border-slate-800">
+                  {[
+                    { name: '09.mp4', src: heroVideo09 || '/videos/09.mp4' },
+                    { name: 'life.mp4', src: heroVideoLife || '/videos/life.mp4' },
+                    { name: '10.mp4', src: heroVideo10 || '/videos/10.mp4' }
+                  ].map((v) => (
+                    <button
+                      key={v.name}
+                      onClick={() => handleVideoChange(v.src, v.name)}
+                      className={`px-2.5 py-1 rounded-lg font-mono text-[10px] font-bold transition-all cursor-pointer ${
+                        videoName === v.name
+                          ? 'bg-[#00ff87] text-slate-950 shadow-sm'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                      }`}
+                    >
+                      {v.name}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="bg-[#0b112c]/80 p-3 rounded-2xl border border-slate-800">
-                <span className="text-slate-400 block text-[10px]">COLLEGES & DEPTS</span>
-                <span className="text-cyan-300 text-base font-bold">11 / 60 Depts</span>
-              </div>
-              <div className="bg-[#0b112c]/80 p-3 rounded-2xl border border-slate-800">
-                <span className="text-slate-400 block text-[10px]">SECURITY LEVEL</span>
-                <span className="text-emerald-400 text-base font-bold">ASA 5506-X</span>
-              </div>
+
+              <span className="text-[11px] font-mono text-cyan-300">
+                Auto-Looping &bull; 60 FPS &bull; Muted
+              </span>
             </div>
           </div>
 
-          {/* Right Hero Visual (Cyber Hologram Artwork) */}
-          <div className="flex-1 relative max-w-lg lg:max-w-none w-full">
-            <div className="relative rounded-3xl overflow-hidden border-2 border-[#00ff87]/40 shadow-2xl shadow-[#00ff87]/20 group">
-              <img
-                src="/src/assets/images/hero_cyber_operator_1790587415867.jpg"
-                alt="Cyberlux Network Simulation Operator"
-                className="w-full h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#070b19] via-transparent to-transparent" />
-
-              {/* Floating Overlay Card */}
-              <div className="absolute bottom-6 left-6 right-6 bg-[#0b112c]/90 backdrop-blur-md p-4 rounded-2xl border border-[#00ff87]/30 shadow-xl flex items-center justify-between">
+          {/* Right Hero Visual & Telemetry Card (Allows full background video visibility) */}
+          <div className="flex-1 relative max-w-lg lg:max-w-md w-full">
+            <div className="bg-[#0b112c]/85 backdrop-blur-xl p-6 rounded-3xl border border-[#00ff87]/35 shadow-2xl shadow-[#00ff87]/15 space-y-5">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#00ff87]/20 border border-[#00ff87]/40 flex items-center justify-center text-[#00ff87]">
+                  <div className="w-10 h-10 rounded-2xl bg-[#00ff87]/20 border border-[#00ff87]/40 flex items-center justify-center text-[#00ff87]">
                     <Activity className="w-5 h-5 animate-pulse" />
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-white">4-Campus OSPF Area 0</h4>
-                    <p className="text-[11px] text-slate-400 font-mono">10.10.0.0/16 &bull; 10.20.0.0/16 &bull; 10.40.0.0/16</p>
+                    <p className="text-[10px] text-slate-400 font-mono">10.10.0.0/16 &bull; 10.20.0.0/16 &bull; 10.40.0.0/16</p>
                   </div>
                 </div>
+                <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold border border-emerald-500/30">
+                  LIVE
+                </span>
+              </div>
+
+              {/* Quick Metrics Inside Card */}
+              <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
+                <div className="bg-slate-950/70 p-3 rounded-2xl border border-slate-800/90">
+                  <span className="text-slate-400 block text-[9px] uppercase">Core Links</span>
+                  <span className="text-[#00ff87] font-bold text-sm">20 Gbps Aggregate</span>
+                </div>
+                <div className="bg-slate-950/70 p-3 rounded-2xl border border-slate-800/90">
+                  <span className="text-slate-400 block text-[9px] uppercase">Firewall Tier</span>
+                  <span className="text-cyan-300 font-bold text-sm">ASA 5506-X Active</span>
+                </div>
+                <div className="bg-slate-950/70 p-3 rounded-2xl border border-slate-800/90">
+                  <span className="text-slate-400 block text-[9px] uppercase">VLAN Segments</span>
+                  <span className="text-white font-bold text-sm">15 Configured</span>
+                </div>
+                <div className="bg-slate-950/70 p-3 rounded-2xl border border-slate-800/90">
+                  <span className="text-slate-400 block text-[9px] uppercase">IPSec Tunnels</span>
+                  <span className="text-emerald-400 font-bold text-sm">3 Established</span>
+                </div>
+              </div>
+
+              {/* Action Buttons in Card */}
+              <div className="flex items-center gap-2 pt-1">
                 <button
                   onClick={() => onNavigate('telemetry')}
-                  className="px-3.5 py-1.5 rounded-xl bg-[#00ff87] text-slate-950 text-xs font-bold hover:bg-[#00e575] cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl bg-[#00ff87] text-slate-950 text-xs font-bold hover:bg-[#00e575] transition-all cursor-pointer text-center"
                 >
-                  Live View
+                  View Bandwidth NOC
+                </button>
+                <button
+                  onClick={() => onNavigate('soc')}
+                  className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all cursor-pointer"
+                  title="View Security Operations Center"
+                >
+                  SOC Guard
                 </button>
               </div>
             </div>
@@ -233,15 +351,21 @@ export const CyberluxLandingPage: React.FC<CyberluxLandingPageProps> = ({
           </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Image with Neon Frame & Rotating Play Badge */}
+            {/* Left Image & Video Animation with Neon Frame & Rotating Play Badge */}
             <div className="lg:col-span-4 relative flex justify-center">
-              <div className="relative p-2 rounded-3xl border-2 border-[#00ff87]/50 bg-[#0b112c]/60 shadow-xl">
-                <img
-                  src="/src/assets/images/hero_cyber_operator_1790587415867.jpg"
-                  alt="Network Defense Specialist"
+              <div className="relative p-2 rounded-3xl border-2 border-[#00ff87]/50 bg-[#0b112c]/60 shadow-xl overflow-hidden">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  poster="/src/assets/images/hero_cyber_operator_1790587415867.jpg"
                   className="w-72 h-88 rounded-2xl object-cover"
-                  referrerPolicy="no-referrer"
-                />
+                >
+                  <source src={heroVideoLife || '/videos/life.mp4'} type="video/mp4" />
+                  <source src={heroVideo09 || '/videos/09.mp4'} type="video/mp4" />
+                </video>
               </div>
 
               {/* Circular Rotating Play Badge */}
